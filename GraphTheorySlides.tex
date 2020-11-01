@@ -1,0 +1,947 @@
+\documentclass{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{dolphin}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\usepackage{color, soul}
+\usepackage{ulem}
+\usepackage{tikz}
+\usepackage{colortbl}
+
+\usepackage{verbatim}
+\usetikzlibrary{arrows,shapes}
+
+\title{Chapter 3: Graph Theory}
+\date{}
+
+\theoremstyle{definition}
+\newtheorem{formula}[theorem]{Formula}
+\newtheorem{algorithm}[theorem]{Algorithm}
+
+\newcounter{sauvegardeenumi}
+\newcommand{\asuivre}{\setcounter{sauvegardeenumi}{\theenumi}}
+\newcommand{\suite}{\setcounter{enumi}{\thesauvegardeenumi}}
+
+\begin{document}
+\maketitle
+
+
+
+\begin{frame}
+
+\begin{definition}[Graphs, Vertices, and Edges]
+A \textbf{graph} consists of a set of dots, called \textbf{vertices}, and a set of \textbf{edges} connecting pairs of vertices.  
+\end{definition}
+
+\begin{definition}[Vertex]
+A \textbf{vertex} is a dot in the graph that 
+could represent an intersection of streets, a land 
+mass, or a general location, like ``work` or ``school``.  Vertices are often connected by edges.  Note that vertices only occur when a dot is explicitly placed, not whenever two edges cross.  Imagine a freeway overpass --the freeway and side street cross, but it is not possible to change from the side street to the freeway at that point, so there is no intersection and no vertex would be placed.
+\end{definition}
+
+\begin{definition}[Edges]
+Edges connect pairs of vertices.  An edge can represent a physical connection between 
+locations, like a street, or simply that a route connecting the two locations exists, like 
+an airline flight.
+\end{definition}
+\end{frame}
+
+
+
+% TODO Define Adjacency Matrix
+%% Adjacency matrix of graph
+%% \  a  b  c  d  e  f  g
+%% a  x  7     5
+%% b  7  x  8  9  7
+%% c     8  x     5
+%% d  5  9     x 15  6
+%% e     7  5 15  x  8  9
+%% f           6  8  x 11
+%% g              9  11 x
+
+\begin{frame}
+\tikzstyle{vertex}=[circle,fill=black!25,minimum size=20pt,inner sep=0pt]
+\tikzstyle{selected vertex} = [vertex, fill=red!24]
+\tikzstyle{edge} = [draw,thick,-]
+\tikzstyle{weight} = [font=\small]
+\tikzstyle{selected edge} = [draw,line width=5pt,-,red!50]
+\tikzstyle{ignored edge} = [draw,line width=5pt,-,black!20]
+
+\begin{figure}
+\begin{tikzpicture}[scale=1.8, auto,swap]
+    % Draw a 7,11 network
+    % First we draw the vertices
+    \foreach \pos/\name in {{(0,2)/a}, {(2,1)/b}, {(4,1)/c},
+                            {(0,0)/d}, {(3,0)/e}, {(2,-1)/f}, {(4,-1)/g}}
+        \node[vertex] (\name) at \pos {$\name$};
+    % Connect vertices with edges and draw weights
+    \foreach \source/ \dest /\weight in {b/a/, c/b/,d/a/,d/b/,
+                                         e/b/, e/c/,e/d/,
+                                         f/d/,f/e/,
+                                         g/e/,g/f/}
+        \path[edge] (\source) -- node[weight] {$\weight$} (\dest);
+    % Start animating the vertex and edge selection. 
+ %   \foreach \vertex / \fr in {d/1,a/2,f/3,b/4,e/5,c/6,g/7}
+   %     \path<\fr-> node[selected vertex] at (\vertex) {$\vertex$};
+    % For convenience we use a background layer to highlight edges
+    % This way we don't have to worry about the highlighting covering
+    % weight labels. 
+%    \begin{pgfonlayer}{background}
+%        \pause
+%        \foreach \source / \dest in {d/a,d/f,a/b,b/e,e/c,e/g}
+%            \path<+->[selected edge] (\source.center) -- (\dest.center);
+%        \foreach \source / \dest / \fr in {d/b/4,d/e/5,e/f/5,b/c/6,f/g/7}
+%            \path<\fr->[ignored edge] (\source.center) -- (\dest.center);
+%    \end{pgfonlayer}
+\end{tikzpicture}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+
+
+\begin{definition}[Degree of a vertex]
+The \textbf{degree} of a vertex is the number of edges meeting at that vertex.  It is possible for a vertex to have a degree of zero or larger.
+\end{definition}
+
+\tikzstyle{vertex}=[circle,fill=black!25,minimum size=20pt,inner sep=0pt]
+\tikzstyle{selected vertex} = [vertex, fill=red!24]
+\tikzstyle{edge} = [draw,thick,-]
+\tikzstyle{weight} = [font=\small]
+\tikzstyle{selected edge} = [draw,line width=5pt,-,red!50]
+\tikzstyle{ignored edge} = [draw,line width=5pt,-,black!20]
+
+
+\begin{figure}
+\begin{tikzpicture}[scale=1.8, auto,swap]
+    % Draw a 7,11 network
+    % First we draw the vertices
+    \foreach \pos/\name in {{(0,2)/a}, {(2,1)/b}, {(4,1)/c},
+                            {(0,0)/d}, {(3,0)/e}, {(2,-1)/f}, {(4,-1)/g}}
+        \node[vertex] (\name) at \pos {$\name$};
+    % Connect vertices with edges and draw weights
+    \foreach \source/ \dest /\weight in {b/a/, c/b/,d/a/,d/b/,
+                                         e/b/, e/c/,e/d/,
+                                         f/d/,f/e/,
+                                         g/e/,g/f/}
+        \path[edge] (\source) -- node[weight] {$\weight$} (\dest);
+        %
+\end{tikzpicture}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\begin{definition}[Path]
+A \textbf{path} is a sequence of vertices connected by using the edges.
+\end{definition}
+
+\begin{definition}[Circuit]
+A \textbf{circuit} is a path that begins and ends at the same vertex.
+\end{definition}
+
+\tikzstyle{vertex}=[circle,fill=black!25,minimum size=20pt,inner sep=0pt]
+\tikzstyle{selected vertex} = [vertex, fill=red!24]
+\tikzstyle{edge} = [draw,thick,-]
+\tikzstyle{weight} = [font=\small]
+\tikzstyle{selected edge} = [draw,line width=5pt,-,red!50]
+\tikzstyle{ignored edge} = [draw,line width=5pt,-,black!20]
+
+
+\begin{figure}
+\scalebox{0.8}{
+\begin{tikzpicture}[scale=1.8, auto,swap]
+    % Draw a 7,11 network
+    % First we draw the vertices
+    \foreach \pos/\name in {{(0,2)/a}, {(2,1)/b}, {(4,1)/c},
+                            {(0,0)/d}, {(3,0)/e}, {(2,-1)/f}, {(4,-1)/g}}
+        \node[vertex] (\name) at \pos {$\name$};
+    % Connect vertices with edges and draw weights
+    \foreach \source/ \dest /\weight in {b/a/, c/b/,d/a/,d/b/,
+                                         e/b/, e/c/,e/d/,
+                                         f/d/,f/e/,
+                                         g/e/,g/f/}
+        \path[edge] (\source) -- node[weight] {$\weight$} (\dest);
+        %
+\end{tikzpicture}}
+\end{figure}
+
+
+\end{frame}
+
+\begin{frame}
+\begin{definition}[Path]
+A \textbf{path} is a sequence of vertices connected by using the edges.
+\end{definition}
+
+\begin{definition}[Circuit]
+A \textbf{circuit} is a path that begins and ends at the same vertex.
+\end{definition}
+
+\tikzstyle{vertex}=[circle,fill=black!25,minimum size=20pt,inner sep=0pt]
+\tikzstyle{selected vertex} = [vertex, fill=red!24]
+\tikzstyle{edge} = [draw,thick,-]
+\tikzstyle{weight} = [font=\small]
+\tikzstyle{selected edge} = [draw,line width=5pt,-,red!50]
+\tikzstyle{ignored edge} = [draw,line width=5pt,-,black!20]
+
+
+\begin{figure}
+\scalebox{0.8}{
+\begin{tikzpicture}[scale=1.8, auto,swap]
+    % Draw a 7,11 network
+    % First we draw the vertices
+    \foreach \pos/\name in {{(0,2)/a}, {(2,1)/b}, {(4,1)/c},
+                            {(0,0)/d}, {(3,0)/e}, {(2,-1)/f}, {(4,-1)/g}}
+        \node[vertex] (\name) at \pos {$\name$};
+    % Connect vertices with edges and draw weights
+    \foreach \source/ \dest /\weight in {b/a/7, c/b/8,d/a/5,d/b/9,
+                                         e/b/7, e/c/5,e/d/15,
+                                         f/d/6,f/e/8,
+                                         g/e/9,g/f/11}
+        \path[edge] (\source) -- node[weight] {$\weight$} (\dest);
+        %
+\end{tikzpicture}}
+\end{figure}
+
+
+\end{frame}
+
+
+\begin{frame}
+
+\begin{definition}[Weights]
+\textbf{Weights} are numerical values are assigned to the edges of a graph.  The weights could represent the distance between two locations, the travel time, or the travel cost.  It is important to note that the distance between vertices in a graph does not necessarily correspond to the weight of an edge.
+\end{definition}
+
+\begin{definition}[Connected]
+A graph is \textbf{connected} if there is a path from any vertex to any other vertex.  A graph is \textbf{disconnected} if there is a pair of vertices with no path between them.
+\end{definition}
+
+
+
+\end{frame}
+
+
+%%%Dijkstra on graph or with table
+\begin{frame}
+\frametitle{Dijkstra's Algorithm}
+
+\begin{algorithm}[Dijkstra's Algorithm]
+\begin{enumerate}
+\item Mark the ending vertex with a distance of zero.  Designate this vertex as current.
+\item Find all vertices leading to the current vertex.  Calculate their distances to the end.  
+Since we already know the distance the current vertex is from the end, this will just 
+require adding the most recent edge.  Don't record this distance if it is longer than a 
+previously recorded distance.
+\item Mark the current vertex as visited.  We will never look at this vertex again.
+\item Mark the vertex with the smallest distance as current, and re
+peat from step 2.
+\end{enumerate}
+\end{algorithm}
+\end{frame}
+
+\begin{frame}
+Find the shortest path from $a$ to $g$.
+
+\tikzstyle{vertex}=[circle,fill=black!25,minimum size=20pt,inner sep=0pt]
+\tikzstyle{selected vertex} = [vertex, fill=red!24]
+\tikzstyle{edge} = [draw,thick,-]
+\tikzstyle{weight} = [font=\small]
+\tikzstyle{selected edge} = [draw,line width=5pt,-,red!50]
+\tikzstyle{ignored edge} = [draw,line width=5pt,-,black!20]
+
+
+\begin{figure}
+\begin{tikzpicture}[scale=1.8, auto,swap]
+    % Draw a 7,11 network
+    % First we draw the vertices
+    \foreach \pos/\name in {{(0,2)/a}, {(2,1)/b}, {(4,1)/c},
+                            {(0,0)/d}, {(3,0)/e}, {(2,-1)/f}, {(4,-1)/g}}
+        \node[vertex] (\name) at \pos {$\name$};
+    % Connect vertices with edges and draw weights
+    \foreach \source/ \dest /\weight in {b/a/7, c/b/8,d/a/5,d/b/9,
+                                         e/b/7, e/c/5,e/d/15,
+                                         f/d/6,f/e/8,
+                                         g/e/9,g/f/11}
+        \path[edge] (\source) -- node[weight] {$\weight$} (\dest);
+        %
+\end{tikzpicture}
+\end{figure}
+\end{frame}
+
+%\begin{frame}
+%\frametitle{Adjacency matrix}
+%
+%
+%\end{frame}
+%
+%\begin{frame}
+%\frametitle{Dijkstra's Algorithm on adjacency matrix}
+%
+% \begin{center}
+% \begin{tabular}{|l|c|c|c|c|c|c|}
+% \hline
+% & Charlotte & \cellcolor{yellow} Atlanta &  \cellcolor{yellow}Nashville &  \cellcolor{yellow}Knoxville& \textbf{Columbia} & \cellcolor{yellow}Raleigh\\
+% &[52]& \cellcolor{yellow}[19]& \cellcolor{yellow}[25]& \cellcolor{yellow}[37]&[40]&\cellcolor{yellow}[0]\\
+% \hline
+% Charlotte & * & \cellcolor{yellow}& \cellcolor{yellow}& \cellcolor{yellow}15&14&\cellcolor{yellow}\\
+% \hline
+% \cellcolor{yellow} Atlanta & \cellcolor{yellow}& \cellcolor{yellow}*& \cellcolor{yellow}& \cellcolor{yellow}18& \cellcolor{yellow}24&\cellcolor{yellow}19\\
+% \hline
+% \cellcolor{yellow}Nashville& \cellcolor{yellow}& \cellcolor{yellow}& \cellcolor{yellow}*& \cellcolor{yellow}18& \cellcolor{yellow}15&\cellcolor{yellow}25\\
+% \hline
+%  \cellcolor{yellow}Knoxville & \cellcolor{yellow}15& \cellcolor{yellow}18& \cellcolor{yellow}18& \cellcolor{yellow}*& \cellcolor{yellow}14&\cellcolor{yellow}\\
+% \hline
+% Columbia & 14 &  \cellcolor{yellow}24& \cellcolor{yellow}15& \cellcolor{yellow}14&8&\cellcolor{yellow}\\
+% \hline
+% \cellcolor{yellow}Raleigh &\cellcolor{yellow}&\cellcolor{yellow}19&\cellcolor{yellow}25&\cellcolor{yellow}&\cellcolor{yellow}&\cellcolor{yellow}*\\
+% \hline
+% \end{tabular}
+% \end{center}
+% 
+%\end{frame}
+
+%%%%Euler circuits
+%\begin{definition}[Loop]
+%A \textbf{loop} is a special type of edge that connects a vertex to itself.  %Loops are not used much in street network graphs.
+%\end{definition}
+
+\begin{frame}
+\frametitle{Euler path and circuit}
+\begin{definition}[Euler Path]
+\begin{enumerate}
+\item 
+An \textbf{Euler path} is a path that uses every edge in a graph with no repeats.  Being a path, it does not have to return to the starting vertex.
+\item An \textbf{Euler circuit} is a circuit that uses every edge in a graph with no repeats.  Being a circuit, it must start and end at the same vertex.
+\end{enumerate}
+\end{definition}
+\pause
+\begin{theorem}[Euler's Path and Circuit Theorems]
+\begin{itemize}
+\item A graph will contain an Euler path if it contains at most two vertices of odd degree.
+\item A graph will contain an Euler circuit if all vertices have even degree
+\end{itemize}
+\end{theorem}
+\end{frame}
+
+%%%%Eulerization and Chinese Postman Problem
+\begin{frame}
+\frametitle{Euler example}
+\begin{center}
+\begin{tikzpicture}
+\draw[blue] (0,0)--(0,-2);
+\draw[fill] (0,-2) circle[radius=.1];
+\draw[blue] (0,0) -- (0,2);
+\draw[fill] (0,0) circle[radius=.1];
+\draw[fill] (0,2) circle[radius=.1];
+\draw[blue] (0,0)--(3,0);
+\draw[fill] (3,0) circle[radius=.1];
+\draw[blue] (3,0)--(6,0);
+\draw[fill] (6,0) circle[radius=.1];
+\draw[fill] (6,2) circle[radius=.1];
+\draw[blue] (6,2)--(6,0);
+\draw[blue] (3,2)--(3,0);
+\draw[blue] (6,-2)--(6,0);
+\draw[fill] (6,-2) circle[radius=.1];
+\draw[fill] (3,2) circle[radius=.1];
+\draw[blue] (6,-2)--(6,0);
+\draw[blue] (6,-2)--(3,0);
+\draw[blue] (0,-2)--(3,0);
+\draw[blue] (3,2)--(6,2);
+\draw[blue] (0,2)--(3,0);
+\draw[blue] (6,0)--(3,2);
+\draw[blue] (3,2)--(0,0);
+%\draw[red] (2,-2)--(3,0);
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Euler example}
+\begin{center}
+\begin{tikzpicture}
+\draw[blue] (0,0)--(0,-2);
+\draw[fill] (0,-2) circle[radius=.1] node[left]{2};
+\draw[blue] (0,0) -- (0,2);
+\draw[fill] (0,0) circle[radius=.1] node[left]{4};
+\draw[fill] (0,2) circle[radius=.1] node[left]{2};
+\draw[blue] (0,0)--(3,0);
+\draw[fill] (3,0) circle[radius=.1] node[below]{6};
+\draw[blue] (3,0)--(6,0);
+\draw[fill] (6,0) circle[radius=.1] node[right]{4};
+\draw[fill] (6,2) circle[radius=.1] node[right]{2};
+\draw[blue] (6,2)--(6,0);
+\draw[blue] (3,2)--(3,0);
+\draw[blue] (6,-2)--(6,0);
+\draw[fill] (6,-2) circle[radius=.1] node[right]{2};
+\draw[fill] (3,2) circle[radius=.1] node[above]{4};
+\draw[blue] (6,-2)--(6,0);
+\draw[blue] (6,-2)--(3,0);
+\draw[blue] (0,-2)--(3,0);
+\draw[blue] (3,2)--(6,2);
+\draw[blue] (0,2)--(3,0);
+\draw[blue] (6,0)--(3,2);
+\draw[blue] (3,2)--(0,0);
+%\draw[red] (2,-2)--(3,0);
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Eulerization}
+\begin{definition}[Eulerization]
+\textbf{Eulerization} is the process of adding edges to a graph to create an Euler circuit on a graph.  To eulerize a graph, edges are duplicated to connect pairs of vertices with odd degree.  Connecting two odd degree vertices increases the degree of each, giving them both even degree.  When two odd degree vertices are not directly connected, we can duplicate all edges in a path connecting the two.
+\end{definition}
+\end{frame}
+
+\begin{frame}
+\frametitle{Chinese Postman Problem}
+\begin{center}
+\begin{tikzpicture}
+
+\draw[blue] (0,0)--(2,-2);
+\draw[fill] (2,-2) circle[radius=.1];
+\draw[blue] (0,0) -- (1,1);
+\draw[fill] (0,0) circle[radius=.1];
+\draw[fill] (1,1) circle[radius=.1];
+\draw[blue] (0,0)--(3,0);
+\draw[fill] (3,0) circle[radius=.1];
+\draw[blue] (3,0)--(6,0);
+\draw[fill] (6,0) circle[radius=.1];
+\draw[fill] (5,2) circle[radius=.1];
+\draw[blue] (5,2)--(1,1);
+\draw[blue] (5,2)--(6,0);
+\draw[blue] (5,2)--(3,0);
+\draw[fill] (6,-2) circle[radius=.1];
+\draw[fill] (5,-1) circle[radius=.1];
+\draw[blue] (6,-2)--(6,0);
+\draw[blue] (5,-1)--(6,0);
+\draw[blue] (6,-2)--(2,-2);
+\draw[blue] (5,-1)--(2,-2);
+%\draw[red] (2,-2)--(3,0);
+\end{tikzpicture}
+\end{center}
+
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Chinese Postman Problem}
+
+\begin{center}
+\begin{tikzpicture}
+
+\draw[blue] (0,0)--(2,-2);
+\draw[fill] (2,-2) circle[radius=.1] node [left]{3};
+\draw[blue] (0,0) -- (1,1);
+\draw[fill] (0,0) circle[radius=.1] node [left]{3};
+\draw[fill] (1,1) circle[radius=.1] node [left]{2};
+\draw[blue] (0,0)--(3,0);
+\draw[fill] (3,0) circle[radius=.1] node [above]{3};
+\draw[blue] (3,0)--(6,0);
+\draw[fill] (6,0) circle[radius=.1] node [right]{4};
+\draw[fill] (5,2) circle[radius=.1] node [right]{3};
+\draw[blue] (5,2)--(1,1);
+\draw[blue] (5,2)--(6,0);
+\draw[blue] (5,2)--(3,0);
+\draw[fill] (6,-2) circle[radius=.1] node [right]{2};
+\draw[fill] (5,-1) circle[radius=.1] node [below]{2};
+\draw[blue] (6,-2)--(6,0);
+\draw[blue] (5,-1)--(6,0);
+\draw[blue] (6,-2)--(2,-2);
+\draw[blue] (5,-1)--(2,-2);
+%\draw[red] (2,-2)--(3,0);
+\end{tikzpicture}
+\end{center}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Chinese Postman Problem}
+
+\begin{center}
+\begin{tikzpicture}
+
+\draw[blue] (6,-2)--(6,0);
+\draw[blue] (5,-1)--(6,0);
+\draw[blue] (6,-2)--(2,-2);
+\draw[blue] (5,-1)--(2,-2);
+\draw[blue] (5,2)--(1,1);
+\draw[blue] (5,2)--(6,0);
+\draw[blue] (5,2)--(3,0);
+\draw[blue] (3,0)--(6,0);
+\draw[blue] (0,0)--(3,0);
+\draw[blue] (0,0) -- (1,1);
+\draw[red] (0,0) to [out=-45, in=-45] (3,0);
+\draw[blue] (0,0)--(2,-2);
+\draw[fill] (2,-2) circle[radius=.1] node [left]{3};
+\draw[fill] (0,0) circle[radius=.1] node [left]{4};
+\draw[fill] (1,1) circle[radius=.1] node [left]{2};
+\draw[fill] (3,0) circle[radius=.1] node [above]{4};
+\draw[fill] (6,0) circle[radius=.1] node [right]{4};
+\draw[fill] (5,2) circle[radius=.1] node [right]{3};
+\draw[fill] (6,-2) circle[radius=.1] node [right]{2};
+\draw[fill] (5,-1) circle[radius=.1] node [below]{2};
+
+\end{tikzpicture}
+\end{center}
+
+\end{frame}
+
+%%%%%Hamilton paths and Traveling Salesman (Brute force and nearest neighbor and RNNA and sorted edges algorithm)
+\begin{frame}
+\frametitle{Hamilton paths and circuits}
+\begin{definition}[Complete Graph]
+A \textbf{complete graph} on $n$ vertices contains exactly one edge between every pair of vertices.
+\end{definition}
+\pause
+
+\begin{definition}[Hamiltonian Circuits and Paths]
+A Hamiltonian circuit is a circuit that visits every vertex once with no repeats.  A Hamiltonian path also visits every vertex once with no repeats, but does not have to start and end at the same vertex.  
+\end{definition}
+
+
+\begin{center}
+\scalebox{.7}{
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1] node [left]{B};
+\draw[fill] (4,0) circle[radius=.1] node [right]{C};
+\draw[fill] (2,2) circle[radius=.1] node [right]{D};
+\draw[fill] (2,4) circle[radius=.1] node [above]{A};
+\draw(0,0)--(4,0);
+\draw(0,0)--(2,2);
+\draw(0,0)--(2,4);
+\draw(4,0)--(2,2);
+\draw(4,0)--(2,4);
+\draw(2,4)--(2,2);
+\node at (2,-0.3){13};
+\node at (0.7,1){9};
+\node at (0.7,2){4};
+\node at (3.3,1){8};
+\node at (3.3,2){2};
+\node at (2.2,2.9){1};
+
+\end{tikzpicture}
+}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Nearest Neighbor Algorithm (NNA)}
+\begin{enumerate}
+\item	Select a starting point.
+\item	Move to the nearest unvisited vertex (the edge with smallest weight).
+\item	Repeat until the circuit is complete.
+\end{enumerate}
+\pause
+\begin{center}
+\scalebox{.7}{
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1] node [left]{B};
+\draw[fill] (4,0) circle[radius=.1] node [right]{C};
+\draw[fill] (2,2) circle[radius=.1] node [right]{D};
+\draw[fill] (2,4) circle[radius=.1] node [above]{A};
+\draw(0,0)--(4,0);
+\draw(0,0)--(2,2);
+\draw(0,0)--(2,4);
+\draw(4,0)--(2,2);
+\draw(4,0)--(2,4);
+\draw(2,4)--(2,2);
+\node at (2,-0.3){13};
+\node at (0.7,1){9};
+\node at (0.7,2){4};
+\node at (3.3,1){8};
+\node at (3.3,2){2};
+\node at (2.2,2.9){1};
+\end{tikzpicture}
+}
+\end{center}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Nearest Neighbor Algorithm (NNA)}
+\begin{enumerate}
+\item	Select a starting point.
+\item	Move to the nearest unvisited vertex (the edge with smallest weight).
+\item	Repeat until the circuit is complete.
+\end{enumerate}
+\pause
+\begin{center}
+\scalebox{.7}{
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1] node [left]{B};
+\draw[fill] (4,0) circle[radius=.1] node [right]{C};
+\draw[fill] (2,2) circle[radius=.1] node [right]{D};
+\draw[fill] (2,4) circle[radius=.1] node [above]{A};
+\draw[very thick, blue] (0,0)--(4,0);
+\draw(0,0)--(2,2);
+\draw[very thick, blue] (0,0)--(2,4);
+\draw[very thick, blue] (4,0)--(2,2);
+\draw(4,0)--(2,4);
+\draw[very thick, blue] (2,4)--(2,2);
+\node at (2,-0.3){13};
+\node at (0.7,1){9};
+\node at (0.7,2){4};
+\node at (3.3,1){8};
+\node at (3.3,2){2};
+\node at (2.2,2.9){1};
+\end{tikzpicture}
+}
+
+
+\textcolor{blue}{$A\rightarrow D \rightarrow C \rightarrow B \rightarrow A$, 26}
+\end{center}
+\end{frame}
+%
+%\begin{frame}
+%\frametitle{NNA Example}
+%picture
+%\pause
+%It didn't work
+%\end{frame}
+
+\begin{frame}
+\frametitle{Repeated Nearest Neighbor Algorithm (RNNA)}
+\begin{enumerate}
+\item	Do the Nearest Neighbor Algorithm starting at each vertex.
+\item	Choose the circuit produced with minimal total weight.
+\end{enumerate}
+\pause
+\begin{center}
+$B\rightarrow A \rightarrow D \rightarrow C \rightarrow B$, 26\\
+$C\rightarrow A \rightarrow D \rightarrow B \rightarrow C$, 25\\
+$D\rightarrow A \rightarrow C \rightarrow B \rightarrow D$, 25
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Repeated Nearest Neighbor Algorithm (RNNA)}
+\begin{enumerate}
+\item	Do the Nearest Neighbor Algorithm starting at each vertex.
+\item	Choose the circuit produced with minimal total weight.
+\end{enumerate}
+\begin{center}
+$B\rightarrow A \rightarrow D \rightarrow C \rightarrow B$, 26\\
+\textcolor{red}{$C\rightarrow A \rightarrow D \rightarrow B \rightarrow C$, 25}\\
+\textcolor{red}{$D\rightarrow A \rightarrow C \rightarrow B \rightarrow D$, 25}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Sorted Edges Algorithm}
+\begin{enumerate}
+\item Select the cheapest unused edge in the graph.
+\item Repeat step 1, adding the cheapest unused edge to the circuit, unless:
+\begin{enumerate}
+\item adding the edge would create a circuit that doesn't contain all vertices, or
+\item adding the edge would give a vertex degree 3.
+\end{enumerate}
+\item Repeat until a circuit containing all vertices is found.
+\end{enumerate}
+\pause
+\begin{center}
+\scalebox{.7}{
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1] node [left]{B};
+\draw[fill] (4,0) circle[radius=.1] node [right]{C};
+\draw[fill] (2,2) circle[radius=.1] node [right]{D};
+\draw[fill] (2,4) circle[radius=.1] node [above]{A};
+\draw(0,0)--(4,0);
+\draw(0,0)--(2,2);
+\draw(0,0)--(2,4);
+\draw(4,0)--(2,2);
+\draw(4,0)--(2,4);
+\draw(2,4)--(2,2);
+\node at (2,-0.3){13};
+\node at (0.7,1){9};
+\node at (0.7,2){4};
+\node at (3.3,1){8};
+\node at (3.3,2){2};
+\node at (2.2,2.9){1};
+\end{tikzpicture}
+}
+\end{center}
+\end{frame}
+%%%%%%%Spanning Trees and min cost
+
+\begin{frame}
+\frametitle{Spanning Tree}
+\begin{definition}[Spanning Tree]
+A spanning tree is a connected graph using all vertices in which there are no circuits.  
+In other words, there is a path from any vertex to any other vertex, but no circuits.   
+\end{definition}
+
+\pause
+\scalebox{.9}{
+\begin{minipage}{0.2\textwidth}
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1];
+\draw[fill] (1,1) circle[radius=.1];
+\draw[fill] (1,2) circle[radius=.1];
+\draw[fill] (2,0) circle[radius=.1];
+\draw(0,0)--(1,2);
+\draw(0,0)--(1,1);
+\draw(1,2)--(2,0);
+\end{tikzpicture}
+\end{minipage}
+%
+\begin{minipage}{0.2\textwidth}
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1];
+\draw[fill] (1,1) circle[radius=.1];
+\draw[fill] (1,2) circle[radius=.1];
+\draw[fill] (2,0) circle[radius=.1];
+\draw(0,0)--(1,2);
+\draw(2,0)--(1,1);
+\draw(1,2)--(2,0);
+\end{tikzpicture}
+\end{minipage}
+%
+\begin{minipage}{0.2\textwidth}
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1];
+\draw[fill] (1,1) circle[radius=.1];
+\draw[fill] (1,2) circle[radius=.1];
+\draw[fill] (2,0) circle[radius=.1];
+\draw(0,0)--(1,2);
+\draw(0,0)--(1,1);
+\draw(0,0)--(2,0);
+\end{tikzpicture}
+\end{minipage}
+%
+\begin{minipage}{0.2\textwidth}
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1];
+\draw[fill] (1,1) circle[radius=.1];
+\draw[fill] (1,2) circle[radius=.1];
+\draw[fill] (2,0) circle[radius=.1];
+\draw(0,0)--(1,2);
+\draw(1,2)--(1,1);
+\draw(1,2)--(2,0);
+\end{tikzpicture}
+\end{minipage}
+%
+\begin{minipage}{0.2\textwidth}
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1];
+\draw[fill] (1,1) circle[radius=.1];
+\draw[fill] (1,2) circle[radius=.1];
+\draw[fill] (2,0) circle[radius=.1];
+\draw(1,1)--(1,2);
+\draw(1,2)--(2,0);
+\draw(0,0)--(2,0);
+\end{tikzpicture}
+\end{minipage}}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Kruskal's Algorithm}
+\begin{definition}[Minimum Cost Spanning Tree (MCST)]
+The minimum cost spanning tree is the spanning tree with the smallest total edge weight.  
+\end{definition}
+\pause
+
+\begin{theorem}[Kruskal's Algorithm]
+\hspace{3in}
+\begin{enumerate}
+\item Select the cheapest unused edge in the graph.
+\item Repeat step 1, adding the cheapest unused edge, unless:
+\begin{enumerate}
+\item adding the edge would create a circuit.
+\end{enumerate}
+\item Repeat until a spanning tree is formed.
+\end{enumerate}
+\end{theorem}
+\end{frame}
+
+\begin{frame}%0
+\frametitle{Example}
+\begin{center}
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1] node[below]{D};
+\draw[fill] (3,0) circle[radius=.1] node[below]{C};
+\draw[fill] (-1,1.5) circle[radius=.1] node[left]{E};
+\draw[fill] (2,3) circle[radius=.1] node[above]{A};
+\draw[fill] (5,1.5) circle[radius=.1] node[right]{B};
+\draw(0,0)--(3,0);
+\draw(0,0)--(2,3);
+\draw(0,0)--(-1,1.5);
+\draw(0,0)--(5,1.5);
+\draw(3,0)--(-1,1.5);
+\draw(3,0)--(2,3);
+\draw(3,0)--(5,1.5);
+\draw(-1,1.5)--(2,3);
+\draw(-1,1.5)--(5,1.5);
+\draw(2,3)--(5,1.5);
+\node at (1.5, -0.2){\$7};
+\node at (-0.9, 0.7){\$13};
+\node at (4.6,0.7){\$10};
+\node at (3.5, 2.5){\$4};
+\node at (0.5,2.5){\$5};
+\node at (1.7,1.3){\$6};
+\node at (1.15,2.15){\$9};
+\node at (2.5,2.15){\$8};
+\node at (0,0.9){\$11};
+\node at (3.4,0.85){\$14};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+
+\begin{frame}%1
+\frametitle{Example}
+\begin{center}
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1] node[below]{D};
+\draw[fill] (3,0) circle[radius=.1] node[below]{C};
+\draw[fill] (-1,1.5) circle[radius=.1] node[left]{E};
+\draw[fill] (2,3) circle[radius=.1] node[above]{A};
+\draw[fill] (5,1.5) circle[radius=.1] node[right]{B};
+\draw(0,0)--(3,0);
+\draw(0,0)--(2,3);
+\draw(0,0)--(-1,1.5);
+\draw(0,0)--(5,1.5);
+\draw(3,0)--(-1,1.5);
+\draw(3,0)--(2,3);
+\draw(3,0)--(5,1.5);
+\draw(-1,1.5)--(2,3);
+\draw(-1,1.5)--(5,1.5);
+\draw[very thick, red](2,3)--(5,1.5);
+\node at (1.5, -0.2){\$7};
+\node at (-0.9, 0.7){\$13};
+\node at (4.6,0.7){\$10};
+\node at (3.5, 2.5){\$4};
+\node at (0.5,2.5){\$5};
+\node at (1.7,1.3){\$6};
+\node at (1.15,2.15){\$9};
+\node at (2.5,2.15){\$8};
+\node at (0,0.9){\$11};
+\node at (3.4,0.85){\$14};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+
+\begin{frame}%2
+\frametitle{Example}
+\begin{center}
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1] node[below]{D};
+\draw[fill] (3,0) circle[radius=.1] node[below]{C};
+\draw[fill] (-1,1.5) circle[radius=.1] node[left]{E};
+\draw[fill] (2,3) circle[radius=.1] node[above]{A};
+\draw[fill] (5,1.5) circle[radius=.1] node[right]{B};
+\draw(0,0)--(3,0);
+\draw(0,0)--(2,3);
+\draw(0,0)--(-1,1.5);
+\draw(0,0)--(5,1.5);
+\draw(3,0)--(-1,1.5);
+\draw(3,0)--(2,3);
+\draw(3,0)--(5,1.5);
+\draw[very thick, red](-1,1.5)--(2,3);
+\draw(-1,1.5)--(5,1.5);
+\draw[very thick, red](2,3)--(5,1.5);
+\node at (1.5, -0.2){\$7};
+\node at (-0.9, 0.7){\$13};
+\node at (4.6,0.7){\$10};
+\node at (3.5, 2.5){\$4};
+\node at (0.5,2.5){\$5};
+\node at (1.7,1.3){\$6};
+\node at (1.15,2.15){\$9};
+\node at (2.5,2.15){\$8};
+\node at (0,0.9){\$11};
+\node at (3.4,0.85){\$14};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}%3
+\frametitle{Example}
+\begin{center}
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1] node[below]{D};
+\draw[fill] (3,0) circle[radius=.1] node[below]{C};
+\draw[fill] (-1,1.5) circle[radius=.1] node[left]{E};
+\draw[fill] (2,3) circle[radius=.1] node[above]{A};
+\draw[fill] (5,1.5) circle[radius=.1] node[right]{B};
+\draw[very thick, red](0,0)--(3,0);
+\draw(0,0)--(2,3);
+\draw(0,0)--(-1,1.5);
+\draw(0,0)--(5,1.5);
+\draw(3,0)--(-1,1.5);
+\draw(3,0)--(2,3);
+\draw(3,0)--(5,1.5);
+\draw[very thick, red](-1,1.5)--(2,3);
+\draw(-1,1.5)--(5,1.5);
+\draw[very thick, red](2,3)--(5,1.5);
+\node at (1.5, -0.2){\$7};
+\node at (-0.9, 0.7){\$13};
+\node at (4.6,0.7){\$10};
+\node at (3.5, 2.5){\$4};
+\node at (0.5,2.5){\$5};
+\node at (1.7,1.3){\$6};
+\node at (1.15,2.15){\$9};
+\node at (2.5,2.15){\$8};
+\node at (0,0.9){\$11};
+\node at (3.4,0.85){\$14};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}%4
+\frametitle{Example}
+\begin{center}
+\begin{tikzpicture}
+\draw[fill] (0,0) circle[radius=.1] node[below]{D};
+\draw[fill] (3,0) circle[radius=.1] node[below]{C};
+\draw[fill] (-1,1.5) circle[radius=.1] node[left]{E};
+\draw[fill] (2,3) circle[radius=.1] node[above]{A};
+\draw[fill] (5,1.5) circle[radius=.1] node[right]{B};
+\draw[very thick, red](0,0)--(3,0);
+\draw(0,0)--(2,3);
+\draw(0,0)--(-1,1.5);
+\draw(0,0)--(5,1.5);
+\draw(3,0)--(-1,1.5);
+\draw[very thick, red](3,0)--(2,3);
+\draw(3,0)--(5,1.5);
+\draw[very thick, red](-1,1.5)--(2,3);
+\draw(-1,1.5)--(5,1.5);
+\draw[very thick, red](2,3)--(5,1.5);
+\node at (1.5, -0.2){\$7};
+\node at (-0.9, 0.7){\$13};
+\node at (4.6,0.7){\$10};
+\node at (3.5, 2.5){\$4};
+\node at (0.5,2.5){\$5};
+\node at (1.7,1.3){\$6};
+\node at (1.15,2.15){\$9};
+\node at (2.5,2.15){\$8};
+\node at (0,0.9){\$11};
+\node at (3.4,0.85){\$14};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

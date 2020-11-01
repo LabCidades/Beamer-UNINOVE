@@ -39,7 +39,7 @@
 \titlegraphic{\includegraphics[width=3cm]{UNINOVE_LOGO.JPG}\hspace*{0cm}~   
 }
 
-\title{The Beamer Document Class} 
+\title{Teoria dos Grafos - UNINOVE} 
 \subtitle{Creating A Custom Presentation Template with \LaTeX{} Code}
 \author{Jose Storopoli} 
 \institute[Cidades Inteligentes e Sustentáveis]{
@@ -66,7 +66,7 @@
 \begin{figure}
 
 \tikz \graph [spring layout, nodes={draw,circle}] {
-a[as=$a_1$, red] --[thick, red, "foo"] b -- c -- a; %node+edge style + label
+a[as=$a_1$, red] ->[thick, red, "foo"] b -- c -- a; %node+edge style + label
 d -- e;
 f -- g -- h -- d -- f;
 e -- g; };
@@ -128,6 +128,6 @@ A star graph
 
 
 
-  %--- End -------------------------------------------------------------%
+ %--- End -------------------------------------------------------------%
 
 \end{document}
