@@ -2,7 +2,12 @@
 % Load LaTeX packages
 \documentclass[10pt, xcolor=dvipsnames]{beamer} 
 \usepackage[absolute, overlay]{textpos}                           % supports floating text in any location
+\usepackage[utf8]{inputenc}
 \usepackage{tikz}
+\usepackage{csquotes,xpatch}% recommended
+%\usepackage[english]{babel}
+%\usepackage[american]{babel}
+\usepackage[brazil]{babel}
 \usetikzlibrary{graphs}
 \usetikzlibrary{graphdrawing}
 \usegdlibrary{force}
@@ -84,7 +89,7 @@ The sample code also defines 2 columns.
  
 \end{frame}
 
- %--- Slide 2 -------------------------------------------------------------%
+%--- Slide 2 -------------------------------------------------------------%
  
 \begin{frame}{Floating Text} 
 The \LaTeX{} package \texttt{textpos} makes it possible to put text objects in arbitrarily prescribed places.\\[2ex]
@@ -103,5 +108,5 @@ Example below:
 \end{frame}
  
  
-  %--- End -------------------------------------------------------------%
+%--- End -------------------------------------------------------------%
 \end{document}
