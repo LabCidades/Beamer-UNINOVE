@@ -1,6 +1,6 @@
 %--- Preamble ---------------------------------------------------------%
 % Load LaTeX packages
-\documentclass[10pt, xcolor=dvipsnames]{beamer} 
+\documentclass[10pt, xcolor=dvipsnames]{beamer}
 \usepackage[absolute, overlay]{textpos}                           % supports floating text in any location
 \usepackage[utf8]{inputenc}
 \usepackage{tikz}
@@ -8,9 +8,10 @@
 %\usepackage[english]{babel}
 %\usepackage[american]{babel}
 \usepackage[brazil]{babel}
-\usetikzlibrary{graphs}
-\usetikzlibrary{graphdrawing}
-\usegdlibrary{force}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{booktabs}
 
 % Customize theme attributes
 \useoutertheme{infolines}					                     % adds 3 box footer
@@ -37,35 +38,36 @@
       \tiny\it\bgroup\color{red!70!QPblue}}{\egroup\end{textblock*}}
 
 % Define title page logo and project metadata
-\titlegraphic{\includegraphics[width=3cm]{UNINOVE_LOGO.JPG}\hspace*{0cm}~   
+\titlegraphic{\includegraphics[width=3cm]{UNINOVE_LOGO.JPG}\hspace*{0cm}~
 }
 
-\title{Beamer - UNINOVE} 
+\title{Beamer - UNINOVE}
 \subtitle{Creating A Custom Presentation Template with \LaTeX{} Code}
-\author{Jose Storopoli} 
+\author{Jose Storopoli}
 \institute[Cidades Inteligentes e Sustentáveis]{
    \textcolor{QPblue!75}{Universidade Nove de Julho \\
    UNINOVE \\
-   São Paulo \\ 
+   São Paulo \\
    Brasil \\ [1ex]
-   \texttt{josees@uni9.pro.br}}
-} 
+   \texttt{josees@uni9.pro.br}} \\ [1ex]
+   Creative Commons Attribution-ShareAlike 4.0
+}
 \date{Setembro 2020}
 
 \begin{document}
 
 %--- Title Page -------------------------------------------------------%
- 
+
 \begin{frame}[plain]
   \titlepage
 \end{frame}
 
 %--- Slide 1 ----------------------------------------------------------%
- 
+
 \begin{frame}{Bullets}
- 
-Here is a sample slide that shows what \emph{itemized} and \emph{enumerated} lists look:  
- 
+
+Here is a sample slide that shows what \emph{itemized} and \emph{enumerated} lists look:
+
 \begin{columns}
   \begin{column}{0.45\textwidth}
   \begin{itemize}
@@ -74,7 +76,7 @@ Here is a sample slide that shows what \emph{itemized} and \emph{enumerated} lis
     \item itemized item 3
   \end{itemize}
   \end{column}
- 
+
   \begin{column}{0.45\textwidth}
   \begin{enumerate}
     \item enumerated item 1
@@ -84,29 +86,29 @@ Here is a sample slide that shows what \emph{itemized} and \emph{enumerated} lis
   \end{column}
 \end{columns}
 ~\\[2ex]
- 
+
 The sample code also defines 2 columns.
- 
+
 \end{frame}
 
 %--- Slide 2 -------------------------------------------------------------%
- 
-\begin{frame}{Floating Text} 
+
+\begin{frame}{Floating Text}
 The \LaTeX{} package \texttt{textpos} makes it possible to put text objects in arbitrarily prescribed places.\\[2ex]
- 
+
 With floating text, you define the environment name, font size, type, and color.\\[2ex]
- 
-In this example, The \texttt{reference} environment is created to take two input arguments, which specify \texttt{x} and \texttt{y} text position.\\[2ex]  
- 
+
+In this example, The \texttt{reference} environment is created to take two input arguments, which specify \texttt{x} and \texttt{y} text position.\\[2ex]
+
 Slide coordinates are defined relative to the top left corner.  A Beamer slide has dimensions 128mm by 98mm.  Trial and error ensures the ad-hoc text lands where you want.\\[2ex]
- 
+
 Example below:
- 
+
 \begin{reference}{4mm}{75mm}
       V. Jikov, S. Kozlov and O. Olenik, Homogenization of differential operators and integral functionals, Springer, 1994.
-\end{reference} 
+\end{reference}
 \end{frame}
- 
- 
+
+
 %--- End -------------------------------------------------------------%
 \end{document}
